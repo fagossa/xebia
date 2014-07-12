@@ -4,12 +4,12 @@
 package fr.xebia.fgo.mowitnow.model;
 
 /**
- *
+ * Ensemble de mouvements possibles pour une tondeuse
+ * 
  * @author fagossa
  */
 public enum MovementsEnum {
-    /*virement a droite sans la déplacer.*/
-
+    /* virement à droite sans déplacer la tondeuse */
     D {
                 @Override
                 public void move(MowerDto dto, int width, int height) {
@@ -30,7 +30,7 @@ public enum MovementsEnum {
                 }
 
             },
-    /*virement a gauche sans la déplacer.*/
+    /* virement à gauche sans déplacer la tondeuse */
     G {
                 @Override
                 public void move(MowerDto dto, int width, int height) {
@@ -51,8 +51,9 @@ public enum MovementsEnum {
                 }
 
             },
-    /* signifie que l'on avance la tondeuse d'une case 
-     * dans la direction à laquelle elle fait face
+    /* 
+     * signifie que l'on avance la tondeuse d'une case dans la direction à 
+     * laquelle elle fait face
      */
     A {
                 @Override
@@ -84,10 +85,11 @@ public enum MovementsEnum {
             };
 
     /**
-     *
-     * @param dto
-     * @param width
-     * @param height
+     * Exécute le mouvement sur une tondeuse
+     * 
+     * @param dto tondeuse à déplacer
+     * @param width largeur de la surface
+     * @param height hauteur de la surface
      */
     public abstract void move(MowerDto dto, int width, int height);
 }

@@ -28,7 +28,7 @@ public class MowerDto {
      */
     public static MowerDto buildMowerDto(String config) {
         String[] data = null;
-        // invalid config?
+        // config invalide?
         if (config == null
                 || (data = config.split(" ")).length != 3) {
             throw new IllegalArgumentException("invalid config " + config);
@@ -42,7 +42,7 @@ public class MowerDto {
                     + data[0] + " or y = " + data[1]);
         }
         CoordinatesEnum dir = CoordinatesEnum.from(data[2]);
-        // unknown direction?
+        // direction inconnue?
         if (dir == null) {
             throw new IllegalArgumentException("invalid direction "
                     + data[2]);
@@ -50,6 +50,10 @@ public class MowerDto {
         return new MowerDto(x, y, dir);
     }
 
+    /*
+     * construction d'une nouvelle instance de la tondeuse par rapport au 
+     * critères speficiées
+     */
     private MowerDto(int x, int y, CoordinatesEnum dir) {
         this.x = x;
         this.y = y;
@@ -57,10 +61,12 @@ public class MowerDto {
     }
 
     /**
-     * ajoute les mouvements specifiés à la queue de mouvements
+     * ajoute les mouvements specifiés à la queue de mouvements. Le mouvements 
+     * invalides sont ignorés
      *
-     * @param steps mouvements en string conservant les valeurs de
+     * @param steps mouvements en string contenant les valeurs de
      * <code>MovementsEnum</code>
+     * 
      * @see MouvementsEnum
      */
     public void enqueue(String steps) {
@@ -71,7 +77,7 @@ public class MowerDto {
                         = MovementsEnum.valueOf(step);
                 queue.offer(stepEnum);
             } catch (IllegalArgumentException e) {
-                // does nothing if unknown value
+                // fait rien si valeur non valide
             }
         }
     }
@@ -84,26 +90,44 @@ public class MowerDto {
         return queue.poll();
     }
 
+    /**
+     * @return position x
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * @param x nouvelle position de x
+     */
     public void setX(int x) {
         this.x = x;
     }
 
+    /**
+     * @return position y
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * @param y nouvelle position de y
+     */
     public void setY(int y) {
         this.y = y;
     }
 
+    /**
+     * @return direction de la tonteuse
+     */
     public CoordinatesEnum getDirection() {
         return dir;
     }
 
+    /**
+     * @param dir nouvelle direction de la tondeuse
+     */
     public void setDirection(CoordinatesEnum dir) {
         this.dir = dir;
     }

@@ -83,7 +83,7 @@ public class SurfaceController {
     private List<MowerDto> getMowersFromArray(
             final String[] movements) {
         List<MowerDto> list = new ArrayList<MowerDto>();
-        // we know for sure that there is a pair amt of mowers
+        // on est certain qu'il y a une quantité impair des tondeuses
         for (int i = 1; i < movements.length; i += 2) {
             MowerDto mower = MowerDto.buildMowerDto(movements[i]);
             mower.enqueue(movements[i + 1]);
