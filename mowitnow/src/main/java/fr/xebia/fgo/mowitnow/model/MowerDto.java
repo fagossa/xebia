@@ -7,7 +7,8 @@ import java.util.Queue;
 import java.util.concurrent.LinkedTransferQueue;
 
 /**
- *
+ * Répresentation de la tondeuse
+ * 
  * @author fagossa
  */
 public class MowerDto {
@@ -21,33 +22,48 @@ public class MowerDto {
 
     /**
      * construction d'une instance de la classe
-     *
-     * @param config config initial de la tondeuse (e.g."1 2 N")
-     * @return nouvelle instance
-     * @throws IllegalArgumentException en cas de mauvaise config
      */
-    public static MowerDto buildMowerDto(String config) {
-        String[] data = null;
-        // config invalide?
-        if (config == null
-                || (data = config.split(" ")).length != 3) {
-            throw new IllegalArgumentException("invalid config " + config);
+    public static class MowerBuilder {
+
+        private final int x;
+        private final int y;
+        private final CoordinatesEnum dir;
+
+        /**
+         * Contruction du builder
+         * 
+         * @param config config initial de la tondeuse (e.g."1 2 N")
+         * @throws IllegalArgumentException en cas de mauvaise config
+         */
+        public MowerBuilder(String config) {
+            String[] data = null;
+            // config invalide?
+            if (config == null
+                    || (data = config.split(" ")).length != 3) {
+                throw new IllegalArgumentException("invalid config " + config);
+            }
+
+            try {
+                x = Integer.parseInt(data[0]);
+                y = Integer.parseInt(data[1]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("invalid config for x = "
+                        + data[0] + " or y = " + data[1]);
+            }
+            dir = CoordinatesEnum.from(data[2]);
+            // direction inconnue?
+            if (dir == null) {
+                throw new IllegalArgumentException("invalid direction "
+                        + data[2]);
+            }
         }
-        int x, y;
-        try {
-            x = Integer.parseInt(data[0]);
-            y = Integer.parseInt(data[1]);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("invalid config for x = "
-                    + data[0] + " or y = " + data[1]);
+
+        /**
+         * @return nouvelle instance 
+         */
+        public MowerDto build() {
+            return new MowerDto(x, y, dir);
         }
-        CoordinatesEnum dir = CoordinatesEnum.from(data[2]);
-        // direction inconnue?
-        if (dir == null) {
-            throw new IllegalArgumentException("invalid direction "
-                    + data[2]);
-        }
-        return new MowerDto(x, y, dir);
     }
 
     /*
@@ -61,12 +77,12 @@ public class MowerDto {
     }
 
     /**
-     * ajoute les mouvements specifiés à la queue de mouvements. Le mouvements 
+     * ajoute les mouvements specifiés à la queue de mouvements. Le mouvements
      * invalides sont ignorés
      *
      * @param steps mouvements en string contenant les valeurs de
      * <code>MovementsEnum</code>
-     * 
+     *
      * @see MouvementsEnum
      */
     public void enqueue(String steps) {

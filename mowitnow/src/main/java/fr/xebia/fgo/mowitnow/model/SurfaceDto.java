@@ -14,35 +14,48 @@ public class SurfaceDto {
 
     private final int width;
     private final int height;
-    
+
     // liste de tondeuses
     private List<MowerDto> mowers
             = new ArrayList<MowerDto>();
 
     /**
-     * Construit une nouvelle instance de surface
-     *
-     * @param config string contenant la longueur et la largeur séparé par un
-     * space
-     * @return nouvelle instance de Surface
-     * @throws IllegalArgumentException en cas de mauvaise config
+     * Construit d'une nouvelle instance de surface
      */
-    public static SurfaceDto buildSurface(String config) {
-        String[] values = null;
-        // invalid config?
-        if (config == null
-                || (values = config.split(" ")).length != 2) {
-            throw new IllegalArgumentException("invalid garden config " + config);
+    public static class SurfaceBuilder {
+
+        private final int width;
+        private final int height;
+
+        /**
+         * Contruction du builder
+         * 
+         * @param config string contenant la longueur et la largeur séparé par
+         * un space
+         * @throws IllegalArgumentException en cas de mauvaise config
+         */
+        public SurfaceBuilder(String config) {
+            String[] values = null;
+            // invalid config?
+            if (config == null
+                    || (values = config.split(" ")).length != 2) {
+                throw new IllegalArgumentException("invalid garden config " + config);
+            }
+            try {
+                width = Integer.parseInt(values[0]);
+                height = Integer.parseInt(values[1]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("invalid config for width = "
+                        + values[0] + " or height = " + values[1]);
+            }
         }
-        int width, height;
-        try {
-            width = Integer.parseInt(values[0]);
-            height = Integer.parseInt(values[1]);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("invalid config for width = "
-                    + values[0] + " or height = " + values[1]);
+
+        /**
+         * @return nouvelle instance
+         */
+        public SurfaceDto build() {
+            return new SurfaceDto(width, height);
         }
-        return new SurfaceDto(width, height);
     }
 
     /*
@@ -97,6 +110,5 @@ public class SurfaceDto {
         }
         return true;
     }
-    
-    
+
 }

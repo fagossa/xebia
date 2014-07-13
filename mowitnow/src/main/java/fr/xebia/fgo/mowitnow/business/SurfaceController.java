@@ -64,7 +64,7 @@ public class SurfaceController {
             throw new IllegalArgumentException("config cannot be pair");
         }
         // la prémier pos est toujours la config de la surface
-        SurfaceDto surface = SurfaceDto.buildSurface(movements[0]);
+        SurfaceDto surface = new SurfaceDto.SurfaceBuilder(movements[0]).build();
         // lecture des autres positions
         List<MowerDto> mowers = getMowersFromArray(movements);
         surface.setMowers(mowers);
@@ -85,7 +85,7 @@ public class SurfaceController {
         List<MowerDto> list = new ArrayList<MowerDto>();
         // on est certain qu'il y a une quantité impair des tondeuses
         for (int i = 1; i < movements.length; i += 2) {
-            MowerDto mower = MowerDto.buildMowerDto(movements[i]);
+            MowerDto mower = new MowerDto.MowerBuilder(movements[i]).build();
             mower.enqueue(movements[i + 1]);
             list.add(mower);
         }

@@ -16,19 +16,19 @@ public class SurfaceDtoTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testExceptionIsThrownTooFewParams() {
-        SurfaceDto tester = SurfaceDto.buildSurface("10");
+        SurfaceDto tester = new SurfaceDto.SurfaceBuilder("10").build();
         fail("Invalid config did not generate exception");
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testExceptionIsThrownTooMuchParms() {
-        SurfaceDto tester = SurfaceDto.buildSurface("10 5 6");
+        SurfaceDto tester = new SurfaceDto.SurfaceBuilder("10 5 6").build();
         fail("Invalid config did not generate exception");
     }
 
     @Test
     public void testSucessfulBuilder() {
-        SurfaceDto tester = SurfaceDto.buildSurface("8 4");
+        SurfaceDto tester = new SurfaceDto.SurfaceBuilder("8 4").build();
         assertEquals("width must be 10", 8, tester.getWidth());
         assertEquals("height must be 6", 4, tester.getHeight());
     }
