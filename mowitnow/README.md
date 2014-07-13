@@ -2,7 +2,7 @@
 
 This is just an example implementation of a robot executing a list of instructions in the way logo did back in the day. Our robot (called mower) is placed is a square surface with strict limits that cannot be crossed. 
 
-# supported instructions
+# Supported instructions
 
 What are the supported instructions?
 
@@ -12,18 +12,18 @@ What are the supported instructions?
 
 # How does it work ?
 
-You have to instantiate the **SurfaceController** and specify instructions you want to execute. You can do it either by using an String array or a file containing all the instructions.
+You have to instantiate the **SurfaceController** and specify the instructions you want to execute. You can do it either by using an String array or a file containing the instructions.
 
-By convention the first instruction is the area or surface in which the different mowers can be moved. The following instructions must be first the mower's start position and then the list of instructions to execute in a sequence.
+The first instruction is the area or surface (width x height) in which the different mowers can be moved. The following instructions must be first the mower's start position (x y Direction) and then the list of instructions to execute in a sequence.
 
 For example, this code:
 
     SurfaceController controller = new SurfaceController();
     String[] movements = {
-        "5 5",
-        "1 2 N",
+        "5 5", // surface
+        "1 2 N", // first mower
         "GAGAGAGAA",
-        "3 3 E",
+        "3 3 E", // second mower
         "AADAADADDA"
     };
     SurfaceDto surface = controller.executeMovements(movements);
