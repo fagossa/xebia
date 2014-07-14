@@ -71,7 +71,7 @@ public class SurfaceDto {
         return maxPosX;
     }
 
-    public int getmaxPosY() {
+    public int getMaxPosY() {
         return maxPosY;
     }
 

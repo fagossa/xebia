@@ -28,7 +28,7 @@ public class SurfaceController {
      * final du traitement
      * @throws FileNotFoundException en cas que le fichier n'existe pas
      * @throws IllegalArgumentException en cas de problèmes de format dans la
-     * liste specifiée
+     * liste d'instructions specifiée
      * @see #executeMovements(java.lang.String[]) 
      */
     public SurfaceDto executeMovements(final File file) throws FileNotFoundException {
@@ -88,8 +88,8 @@ public class SurfaceController {
         // on est certain qu'il y a une quantité impair des tondeuses
         for (int i = 1; i < movements.length; i += 2) {
             MowerDto mower = new MowerDto.MowerBuilder(movements[i]).build();
-            /* la seconde ligne est une série d'instructions ordonnant à la tondeuse d'explorer la
-             * pelouse.
+            /* la seconde ligne est une série d'instructions ordonnant à la 
+             * tondeuse d'explorer la pelouse.
              */
             mower.enqueue(movements[i + 1]);
             list.add(mower);
@@ -103,13 +103,17 @@ public class SurfaceController {
     private void executeQueuedMovements(final SurfaceDto surface) {
         List<MowerDto> mowerList = surface.getMowers();
         // Chaque tondeuse se déplace de façon séquentielle
-        for (MowerDto mower : mowerList) {
+        for (MowerDto mowerDto : mowerList) {
             MovementsEnum movement;
-            while ((movement = mower.dequeue()) != null) {
-                movement.move(mower,
-                        surface.getMaxPosX(), surface.getmaxPosY());
+            while ((movement = mowerDto.dequeue()) != null) {
+                // exécute le mouvement sur la tondeuse
+                movement.move(mowerDto,
+                        surface.getMaxPosX(), surface.getMaxPosY());
             }
-            mower.showCurrentState(System.out);
+            /* Lorsqu'une tondeuse achève une série d'instruction, elle 
+             * communique sa position et son orientation.
+             */
+            mowerDto.showCurrentState(System.out);
         }
     }
 

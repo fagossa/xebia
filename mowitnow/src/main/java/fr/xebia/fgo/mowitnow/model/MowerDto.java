@@ -189,8 +189,7 @@ public class MowerDto {
     }
     
     /**
-     * Lorsqu'une tondeuse achève une série d'instruction, elle communique sa 
-     * position et son orientation.
+     * Impresion de l'état et la position
      * 
      * @param out Strem pour imprimer la situation actuelle après d'exècuter les
      * mouvements
