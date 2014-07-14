@@ -3,6 +3,7 @@
  */
 package fr.xebia.fgo.mowitnow.model;
 
+import java.io.PrintStream;
 import java.util.Queue;
 import java.util.concurrent.LinkedTransferQueue;
 
@@ -30,9 +31,11 @@ public class MowerDto {
         private final CoordinatesEnum dir;
 
         /**
-         * Contruction du builder
+         * Contruction du builder de la tondeuse
          * 
-         * @param config config initial de la tondeuse (e.g."1 2 N")
+         * @param config La position et l'orientation sont fournies sous la 
+         * forme de 2 chiffres et une lettre, séparés par un espace
+         * (e.g."1 2 N")
          * @throws IllegalArgumentException en cas de mauvaise config
          */
         public MowerBuilder(String config) {
@@ -42,7 +45,7 @@ public class MowerDto {
                     || (data = config.split(" ")).length != 3) {
                 throw new IllegalArgumentException("invalid config " + config);
             }
-
+            // validation des données
             try {
                 x = Integer.parseInt(data[0]);
                 y = Integer.parseInt(data[1]);
@@ -80,8 +83,8 @@ public class MowerDto {
      * ajoute les mouvements specifiés à la queue de mouvements. Le mouvements
      * invalides sont ignorés
      *
-     * @param steps mouvements en string contenant les valeurs de
-     * <code>MovementsEnum</code>
+     * @param steps Les instructions sont une suite de caractères sans espaces 
+     * selon les valeures de <code>MovementsEnum</code>
      *
      * @see MouvementsEnum
      */
@@ -184,4 +187,16 @@ public class MowerDto {
                 + ", direction=" + dir + ", queue="
                 + queue + "]";
     }
+    
+    /**
+     * Lorsqu'une tondeuse achève une série d'instruction, elle communique sa 
+     * position et son orientation.
+     * 
+     * @param out Strem pour imprimer la situation actuelle après d'exècuter les
+     * mouvements
+     */
+    public void showCurrentState(PrintStream out) {
+        out.println(toString());
+    }
+
 }

@@ -12,8 +12,9 @@ import java.util.List;
  */
 public class SurfaceDto {
 
-    private final int width;
-    private final int height;
+    // coordonnées du coin supérieur droit de la pelouse
+    private final int maxPosX;
+    private final int maxPosY;
 
     // liste de tondeuses
     private List<MowerDto> mowers
@@ -24,8 +25,8 @@ public class SurfaceDto {
      */
     public static class SurfaceBuilder {
 
-        private final int width;
-        private final int height;
+        private final int maxPosX;
+        private final int maxPosY;
 
         /**
          * Contruction du builder
@@ -42,8 +43,8 @@ public class SurfaceDto {
                 throw new IllegalArgumentException("invalid garden config " + config);
             }
             try {
-                width = Integer.parseInt(values[0]);
-                height = Integer.parseInt(values[1]);
+                maxPosX = Integer.parseInt(values[0]);
+                maxPosY = Integer.parseInt(values[1]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("invalid config for width = "
                         + values[0] + " or height = " + values[1]);
@@ -54,24 +55,24 @@ public class SurfaceDto {
          * @return nouvelle instance
          */
         public SurfaceDto build() {
-            return new SurfaceDto(width, height);
+            return new SurfaceDto(maxPosX, maxPosY);
         }
     }
 
     /*
      * création de la surface avec la largeur et le longeur
      */
-    private SurfaceDto(int width, int height) {
-        this.width = width;
-        this.height = height;
+    private SurfaceDto(int maxPosX, int maxPosY) {
+        this.maxPosX = maxPosX;
+        this.maxPosY = maxPosY;
     }
 
-    public int getWidth() {
-        return width;
+    public int getMaxPosX() {
+        return maxPosX;
     }
 
-    public int getHeight() {
-        return height;
+    public int getmaxPosY() {
+        return maxPosY;
     }
 
     public void setMowers(List<MowerDto> mowers) {
@@ -85,8 +86,8 @@ public class SurfaceDto {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 61 * hash + this.width;
-        hash = 61 * hash + this.height;
+        hash = 61 * hash + this.maxPosX;
+        hash = 61 * hash + this.maxPosY;
         return hash;
     }
 
@@ -99,10 +100,10 @@ public class SurfaceDto {
             return false;
         }
         final SurfaceDto other = (SurfaceDto) obj;
-        if (this.width != other.width) {
+        if (this.maxPosX != other.maxPosX) {
             return false;
         }
-        if (this.height != other.height) {
+        if (this.maxPosY != other.maxPosY) {
             return false;
         }
         if (this.mowers != other.mowers && (this.mowers == null || !this.mowers.equals(other.mowers))) {

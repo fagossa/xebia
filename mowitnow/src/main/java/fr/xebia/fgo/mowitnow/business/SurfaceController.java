@@ -74,7 +74,9 @@ public class SurfaceController {
     }
 
     /*
-     * Obtenir la liste de tondeuses depuis l'array de mouvements specifié
+     * Obtenir la liste de tondeuses depuis l'array de mouvements specifié.
+     * La suite du fichier permet de piloter toutes les tondeuses qui ont été 
+     * déployées.
      * 
      * @param movements la prémier position a la config de la surface. Les 
      * autres sont la position initial de chaque tondeuse et sa liste de
@@ -86,6 +88,9 @@ public class SurfaceController {
         // on est certain qu'il y a une quantité impair des tondeuses
         for (int i = 1; i < movements.length; i += 2) {
             MowerDto mower = new MowerDto.MowerBuilder(movements[i]).build();
+            /* la seconde ligne est une série d'instructions ordonnant à la tondeuse d'explorer la
+             * pelouse.
+             */
             mower.enqueue(movements[i + 1]);
             list.add(mower);
         }
@@ -97,12 +102,14 @@ public class SurfaceController {
      */
     private void executeQueuedMovements(final SurfaceDto surface) {
         List<MowerDto> mowerList = surface.getMowers();
+        // Chaque tondeuse se déplace de façon séquentielle
         for (MowerDto mower : mowerList) {
             MovementsEnum movement;
             while ((movement = mower.dequeue()) != null) {
                 movement.move(mower,
-                        surface.getWidth(), surface.getHeight());
+                        surface.getMaxPosX(), surface.getmaxPosY());
             }
+            mower.showCurrentState(System.out);
         }
     }
 

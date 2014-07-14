@@ -37,7 +37,8 @@ public class SurfaceControllerTest {
     }
 
     @Test
-    public void testQueueingMovements() {
+    public void testQueueingMovementsFromArray() {
+        System.out.println("-- testQueueingMovementsFromArray --");
         SurfaceController controller = new SurfaceController();
         String[] movements = {
             "5 5",
@@ -59,6 +60,7 @@ public class SurfaceControllerTest {
 
     @Test
     public void testQueueingMovementsFromFile() throws FileNotFoundException {
+        System.out.println("-- testQueueingMovementsFromFile --");
         String url = getClass().getResource("/mowitnow.txt").getFile();
         File file = new File(url);
         SurfaceController controller = new SurfaceController();

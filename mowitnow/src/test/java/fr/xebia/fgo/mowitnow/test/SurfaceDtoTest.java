@@ -29,7 +29,7 @@ public class SurfaceDtoTest {
     @Test
     public void testSucessfulBuilder() {
         SurfaceDto tester = new SurfaceDto.SurfaceBuilder("8 4").build();
-        assertEquals("width must be 10", 8, tester.getWidth());
-        assertEquals("height must be 6", 4, tester.getHeight());
+        assertEquals("width must be 10", 8, tester.getMaxPosX());
+        assertEquals("height must be 6", 4, tester.getmaxPosY());
     }
 }
