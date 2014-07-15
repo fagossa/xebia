@@ -5,21 +5,23 @@ package fr.xebia.fgo.mowitnow.model;
 
 import java.io.PrintStream;
 import java.util.Queue;
-import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Répresentation de la tondeuse
- * 
+ *
  * @author fagossa
  */
 public class MowerDto {
 
+    private final SurfaceDto surface;
+    // position de la tondeuse
     private int x;
     private int y;
     private CoordinatesEnum dir;
     // FIFO queue
     private final Queue<MovementsEnum> queue
-            = new LinkedTransferQueue<MovementsEnum>();
+            = new ConcurrentLinkedQueue<MovementsEnum>();
 
     /**
      * construction d'une instance de la classe
@@ -29,16 +31,17 @@ public class MowerDto {
         private final int x;
         private final int y;
         private final CoordinatesEnum dir;
+        private final SurfaceDto surface;
 
         /**
          * Contruction du builder de la tondeuse
-         * 
-         * @param config La position et l'orientation sont fournies sous la 
-         * forme de 2 chiffres et une lettre, séparés par un espace
-         * (e.g."1 2 N")
+         *
+         * @param config La position et l'orientation sont fournies sous la
+         * forme de 2 chiffres et une lettre, séparés par un espace (e.g."1 2
+         * N")
          * @throws IllegalArgumentException en cas de mauvaise config
          */
-        public MowerBuilder(String config) {
+        public MowerBuilder(SurfaceDto surface, String config) {
             String[] data = null;
             // config invalide?
             if (config == null
@@ -59,13 +62,17 @@ public class MowerDto {
                 throw new IllegalArgumentException("invalid direction "
                         + data[2]);
             }
+            if (surface == null) {
+                throw new IllegalArgumentException("invalid surface");
+            }
+            this.surface = surface;
         }
 
         /**
-         * @return nouvelle instance 
+         * @return nouvelle instance
          */
         public MowerDto build() {
-            return new MowerDto(x, y, dir);
+            return new MowerDto(surface, x, y, dir);
         }
     }
 
@@ -73,7 +80,8 @@ public class MowerDto {
      * construction d'une nouvelle instance de la tondeuse par rapport au 
      * critères speficiées
      */
-    private MowerDto(int x, int y, CoordinatesEnum dir) {
+    private MowerDto(SurfaceDto surface, int x, int y, CoordinatesEnum dir) {
+        this.surface = surface;
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -83,7 +91,7 @@ public class MowerDto {
      * ajoute les mouvements specifiés à la queue de mouvements. Le mouvements
      * invalides sont ignorés
      *
-     * @param steps Les instructions sont une suite de caractères sans espaces 
+     * @param steps Les instructions sont une suite de caractères sans espaces
      * selon les valeures de <code>MovementsEnum</code>
      *
      * @see MouvementsEnum
@@ -151,12 +159,20 @@ public class MowerDto {
         this.dir = dir;
     }
 
+    /**
+     * @return surface
+     */
+    public SurfaceDto getSurface() {
+        return surface;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + this.x;
         hash = 97 * hash + this.y;
         hash = 97 * hash + (this.dir != null ? this.dir.hashCode() : 0);
+        hash = 97 * hash + (this.surface != null ? this.surface.hashCode() : 0);
         return hash;
     }
 
@@ -187,15 +203,15 @@ public class MowerDto {
                 + ", direction=" + dir + ", queue="
                 + queue + "]";
     }
-    
+
     /**
      * Impresion de l'état et la position
-     * 
+     *
      * @param out Strem pour imprimer la situation actuelle après d'exècuter les
      * mouvements
      */
     public void showCurrentState(PrintStream out) {
-        out.println(toString());
+        out.println(this);
     }
 
 }

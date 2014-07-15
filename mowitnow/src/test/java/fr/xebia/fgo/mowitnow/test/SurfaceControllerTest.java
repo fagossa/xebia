@@ -50,10 +50,10 @@ public class SurfaceControllerTest {
         SurfaceDto surface = controller.executeMovements(movements);
         assertEquals("invalid mower count", 2, surface.getMowers().size());
 
-        MowerDto expMower1 = new MowerDto.MowerBuilder("1 3 N").build();
+        MowerDto expMower1 = new MowerDto.MowerBuilder(surface, "1 3 N").build();
         assertEquals("invalid mower result", expMower1, surface.getMowers().get(0));
 
-        MowerDto expMower2 = new MowerDto.MowerBuilder("5 1 E").build();
+        MowerDto expMower2 = new MowerDto.MowerBuilder(surface, "5 1 E").build();
         assertEquals("invalid mower result", expMower2, surface.getMowers().get(1));
 
     }
@@ -68,10 +68,10 @@ public class SurfaceControllerTest {
 
         assertEquals("invalid mower count", 2, surface.getMowers().size());
 
-        MowerDto expMower1 = new MowerDto.MowerBuilder("1 3 N").build();
+        MowerDto expMower1 = new MowerDto.MowerBuilder(surface, "1 3 N").build();
         assertEquals("invalid mower result", expMower1, surface.getMowers().get(0));
 
-        MowerDto expMower2 = new MowerDto.MowerBuilder("5 1 E").build();
+        MowerDto expMower2 = new MowerDto.MowerBuilder(surface, "5 1 E").build();
         assertEquals("invalid mower result", expMower2, surface.getMowers().get(1));
     }
 }

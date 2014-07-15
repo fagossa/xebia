@@ -53,8 +53,8 @@ public class SurfaceController {
      * @throws IllegalArgumentException en cas de problèmes de format dans la
      * liste specifiée
      * 
-     * @see SurfaceDto#buildSurface(java.lang.String)
-     * @see MowerDto#buildMowerDto(java.lang.String)
+     * @see SurfaceDto#SurfaceBuilder(java.lang.String)
+     * @see MowerDto#MowerBuilder(SurfaceDto, java.lang.String)
      */
     public SurfaceDto executeMovements(final String[] movements) {
         if (movements == null || movements.length == 0) {
@@ -66,7 +66,7 @@ public class SurfaceController {
         // la prémier pos est toujours la config de la surface
         SurfaceDto surface = new SurfaceDto.SurfaceBuilder(movements[0]).build();
         // lecture des autres positions
-        List<MowerDto> mowers = getMowersFromArray(movements);
+        List<MowerDto> mowers = getMowersFromArray(surface, movements);
         surface.setMowers(mowers);
         // transformation et exécution de chaque mouvement
         executeQueuedMovements(surface);
@@ -82,12 +82,12 @@ public class SurfaceController {
      * autres sont la position initial de chaque tondeuse et sa liste de
      *  mouvements
      */
-    private List<MowerDto> getMowersFromArray(
+    private List<MowerDto> getMowersFromArray(SurfaceDto surface,
             final String[] movements) {
         List<MowerDto> list = new ArrayList<MowerDto>();
         // on est certain qu'il y a une quantité impair des tondeuses
         for (int i = 1; i < movements.length; i += 2) {
-            MowerDto mower = new MowerDto.MowerBuilder(movements[i]).build();
+            MowerDto mower = new MowerDto.MowerBuilder(surface, movements[i]).build();
             /* la seconde ligne est une série d'instructions ordonnant à la 
              * tondeuse d'explorer la pelouse.
              */
@@ -107,8 +107,7 @@ public class SurfaceController {
             MovementsEnum movement;
             while ((movement = mowerDto.dequeue()) != null) {
                 // exécute le mouvement sur la tondeuse
-                movement.move(mowerDto,
-                        surface.getMaxPosX(), surface.getMaxPosY());
+                movement.move(mowerDto);
             }
             /* Lorsqu'une tondeuse achève une série d'instruction, elle 
              * communique sa position et son orientation.

@@ -5,14 +5,15 @@ package fr.xebia.fgo.mowitnow.model;
 
 /**
  * Ensemble de mouvements possibles pour une tondeuse
- * 
+ *
  * @author fagossa
  */
 public enum MovementsEnum {
     /* virement à droite sans déplacer la tondeuse */
+
     D {
                 @Override
-                public void move(MowerDto dto, int maxPosX, int maxPosY) {
+                public void move(MowerDto dto) {
                     switch (dto.getDirection()) {
                         case N:
                             dto.setDirection(CoordinatesEnum.E);
@@ -33,7 +34,7 @@ public enum MovementsEnum {
     /* virement à gauche sans déplacer la tondeuse */
     G {
                 @Override
-                public void move(MowerDto dto, int maxPosX, int maxPosY) {
+                public void move(MowerDto dto) {
                     switch (dto.getDirection()) {
                         case N:
                             dto.setDirection(CoordinatesEnum.W);
@@ -58,15 +59,15 @@ public enum MovementsEnum {
      */
     A {
                 @Override
-                public void move(MowerDto dto, int maxPosX, int maxPosY) {
+                public void move(MowerDto dto) {
                     switch (dto.getDirection()) {
                         case N:
-                            if (dto.getY() + 1 <= maxPosY) {
+                            if (dto.getY() + 1 <= dto.getSurface().getMaxPosY()) {
                                 dto.setY(dto.getY() + 1);
                             }
                             break;
                         case E:
-                            if (dto.getX() + 1 <= maxPosX) {
+                            if (dto.getX() + 1 <= dto.getSurface().getMaxPosX()) {
                                 dto.setX(dto.getX() + 1);
                             }
                             break;
@@ -86,13 +87,11 @@ public enum MovementsEnum {
             };
 
     /**
-     * Exécute le mouvement sur une tondeuse. Si la position après mouvement 
-     * est en dehors de la pelouse, la tondeuse ne bouge pas, conserve son 
+     * Exécute le mouvement sur une tondeuse. Si la position après mouvement est
+     * en dehors de la pelouse, la tondeuse ne bouge pas, conserve son
      * orientation et traite la commande suivante.
-     * 
+     *
      * @param dto tondeuse à déplacer
-     * @param maxPosX position maximal sur X
-     * @param maxPosY position maximal sur Y
      */
-    public abstract void move(MowerDto dto, int maxPosX, int maxPosY);
+    public abstract void move(MowerDto dto);
 }
