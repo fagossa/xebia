@@ -113,8 +113,11 @@ public class MowerDto {
      * Retourne et enlève le dernier mouvement de la queue
      * @return la tête de la queue ou null
      */
-    public MovementsEnum dequeue() {
-        return queue.poll();
+    public void dequeue() {
+        MovementsEnum movement;
+        while ((movement = queue.poll()) != null) {
+            movement.move(this);
+        }
     }
 
     /**

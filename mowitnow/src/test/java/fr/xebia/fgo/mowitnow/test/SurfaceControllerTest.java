@@ -74,4 +74,21 @@ public class SurfaceControllerTest {
         MowerDto expMower2 = new MowerDto.MowerBuilder(surface, "5 1 E").build();
         assertEquals("invalid mower result", expMower2, surface.getMowers().get(1));
     }
+    
+    @Test
+    public void testQueueingMovementsFromFileInLineExecution() throws FileNotFoundException {
+        System.out.println("-- testQueueingMovementsFromFileInLineExecution --");
+        String url = getClass().getResource("/mowitnow.txt").getFile();
+        File file = new File(url);
+        SurfaceController controller = new SurfaceController();
+        SurfaceDto surface = controller.executeMovementsInLine(file);
+
+        assertEquals("invalid mower count", 2, surface.getMowers().size());
+
+        MowerDto expMower1 = new MowerDto.MowerBuilder(surface, "1 3 N").build();
+        assertEquals("invalid mower result", expMower1, surface.getMowers().get(0));
+
+        MowerDto expMower2 = new MowerDto.MowerBuilder(surface, "5 1 E").build();
+        assertEquals("invalid mower result", expMower2, surface.getMowers().get(1));
+    }
 }
