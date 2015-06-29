@@ -16,7 +16,6 @@ class MowerActor extends Actor {
     case PositionRejected =>
     // TODO: try one more time
     
-    //case _ =>  case x: Int => sender() ! RequestAuthorisation
   }
 
 }

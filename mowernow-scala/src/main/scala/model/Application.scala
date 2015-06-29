@@ -1,7 +1,8 @@
 package model
 
-import akka.actor.{ActorSystem, Props}
-import actors.{BeginProcessing, SurfaceActor}
+import actors.SurfaceActor
+import actors.SurfaceActor.BeginProcessing
+import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 
 object Application extends App {
