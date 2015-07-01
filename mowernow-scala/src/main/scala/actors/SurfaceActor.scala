@@ -1,62 +1,76 @@
 package actors
 
-import actors.MowerActor._
-import actors.SurfaceActor.{BeginProcessing, PrintSystemState, SurfaceConfig, TerminateProcessing}
+import java.util.UUID
+
+import actors.MowerMessages._
+import actors.SurfaceActor.SurfaceConfig
+import actors.SurfaceMessages.BeginProcessing
 import akka.actor._
-import com.typesafe.config.ConfigFactory
 import model.{Command, Mower, Position, Surface}
 
-class SurfaceActor(val sur: Surface, initialState: SurfaceConfig) extends Actor with ActorLogging {
+class SurfaceActor(val sur: Surface, initialState: SurfaceConfig) extends Actor with Stash with ActorLogging {
 
-  val config = ConfigFactory.load()
-  val system = ActorSystem("system", config)
-  var children = scala.collection.mutable.ListBuffer[ActorRef]()
+  var children = Set.empty[ActorRef]
 
-  var usedPositions = scala.collection.mutable.TreeSet[Position]()
+  var usedPositions = Set.empty[Position]
 
-  def receive = {
+  override def preStart(): Unit = {
+    super.preStart()
+    context become ready
+  }
+
+  def receive = PartialFunction.empty
+
+  def ready: Receive = {
     case BeginProcessing =>
       log.info(s"===> BeginProcessing")
-      initialState.foreach(key => {
-        val mowerRef = system.actorOf(MowerActor.props())
+      initialState foreach (key => {
+        val mowerId = s"Mower-${UUID.randomUUID().toString}"
+        val mowerRef = context.actorOf(MowerActor.props(), mowerId)
         children += mowerRef
+        log.info(s"===> Handling actor $mowerRef")
         mowerRef ! ExecuteCommands(mower = key._1, commands = key._2)
       })
+      context become working
+  }
 
-    case RequestPosition(current: Position, previous: Position) =>
+  def working: Receive = {
+    case RequestAuthorisation(currentState: Mower, newState: Mower, remainingCommands: List[Command]) =>
       log.info(s"===> RequestPosition")
-      if (usedPositions.contains(current)) {
-        sender() ! PositionRejected
-      } else {
-        sender() ! PositionAutorised
-        usedPositions -= previous
-        usedPositions += current
+      usedPositions contains currentState.pos match {
+        case true => sender() ! PositionRejected
+        case false =>
+          sender() ! PositionAllowed(currentState, remainingCommands: List[Command])
+          usedPositions -= currentState.pos
+          usedPositions += newState.pos
       }
 
     case AllCommandsExecuted(mower: Mower) =>
       log.info(s"All commands executed for <$mower> ...")
 
-    case PrintSystemState =>
-      children.foreach { elem =>
-        elem ! PrintPosition
-      }
+    case SurfaceMessages.PrintSystemState =>
+      children foreach (_ ! PrintPosition)
 
     case TerminateProcessing =>
-      System.exit(1)
+      children foreach (_ ! TerminateProcessing)
+      context stop self
+      context become ready
   }
+
+}
+
+object SurfaceMessages {
+
+  object PrintSystemState
+
+  object BeginProcessing
 
 }
 
 object SurfaceActor {
 
-  object PrintSystemState
-
-  object TerminateProcessing
-
-  object BeginProcessing
-
   type SurfaceConfig = Map[Mower, List[Command]]
 
-  def props(surface: Surface, commands: SurfaceConfig): Props =
-    Props(classOf[SurfaceActor], surface, commands)
+  def props(surface: Surface, initialState: SurfaceConfig): Props =
+    Props(classOf[SurfaceActor], surface, initialState)
 }

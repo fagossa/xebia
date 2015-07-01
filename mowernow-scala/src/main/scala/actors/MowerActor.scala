@@ -1,58 +1,67 @@
 package actors
 
-import actors.MowerActor._
 import akka.actor.{Actor, ActorLogging, Props}
 import model.{Command, Forward, Mower, Position}
 
 class MowerActor extends Actor with ActorLogging {
 
   def receive = {
-    case ExecuteCommands(mower: Mower, commands: List[Command]) =>
+    case MowerMessages.ExecuteCommands(mower: Mower, commands: List[Command]) =>
       log.info(s"===> Executing instructions for $mower")
       if (commands.isEmpty) {
-        context.parent ! AllCommandsExecuted(mower)
+        context.parent ! MowerMessages.AllCommandsExecuted(mower)
       } else {
         commands.head match {
           case command@Forward =>
-            log.debug(s"===> Going forward, current:$command ,remaining:${commands.tail}")
+            log.debug(s"===> Going forward, current:$command")
             val newState = mower.forward
-            context.parent ! RequestPosition(newState.pos, mower.pos)
+            context.parent ! MowerMessages.RequestAuthorisation(mower, newState, commands)
 
           case command@_ =>
             log.debug(s"===> Rotating, remaining:${commands.tail}")
             val newState = mower.rotate(command)
-            self ! ExecuteCommands(newState, commands.tail)
+            self ! MowerMessages.ExecuteCommands(newState, commands.tail)
         }
 
       }
 
-    case PositionAutorised =>
-      // TODO: advance mower
-      log.info(s"===> Position authorized")
+    case MowerMessages.PositionAllowed(mower: Mower, commands: List[Command]) =>
+      log.info(s"===> Position ${mower.pos} authorized, remaining:$commands")
+      self ! MowerMessages.ExecuteCommands(mower, commands.tail)
 
-    case PositionRejected =>
-      // TODO: try one more time
-      log.info(s"===> Position rejected")
+    case MowerMessages.PositionRejected(mower: Mower, commands: List[Command]) =>
+      log.info(s"===> Position ${mower.pos} rejected!!")
+      self ! MowerMessages.ExecuteCommands(mower, commands)
 
-    case PrintPosition =>
+    case MowerMessages.PrintPosition =>
       log.info(s"===> Current position ")
+
+    case MowerMessages.TerminateProcessing =>
+      context stop self
+
   }
 
 }
 
-object MowerActor {
+object MowerMessages {
 
   case class ExecuteCommands(mower: Mower, commands: List[Command])
 
-  case class RequestPosition(current: Position, previous: Position)
+  case class RequestAuthorisation(currentState: Mower, newState: Mower, commands: List[Command])
 
-  case object PositionAutorised
+  case class PositionAllowed(mower: Mower, commands: List[Command])
 
-  case object PositionRejected
+  case class PositionRejected(mower: Mower, commands: List[Command])
 
   case object PrintPosition
 
+  case object TerminateProcessing
+
   case class AllCommandsExecuted(mower: Mower)
+
+}
+
+object MowerActor {
 
   def props(): Props = Props(classOf[MowerActor])
 

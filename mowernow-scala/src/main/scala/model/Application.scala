@@ -1,7 +1,7 @@
 package model
 
 import actors.SurfaceActor
-import actors.SurfaceActor.BeginProcessing
+import actors.SurfaceMessages.BeginProcessing
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 
@@ -9,8 +9,8 @@ object Application extends App {
   val surface = Surface(Dimension(5, 5))
 
   val commands: Map[Mower, List[Command]] = Map(
-    //Mower(surface, pos = Position(0, 0), ori = North) -> List(Right, Forward, Left, Forward, Forward),
-    Mower(surface, pos = Position(3, 3), ori = South) -> List(Left, Forward, Right, Forward, Forward, Left)
+    Mower(surface, pos = Position(0, 0), ori = North) -> List(Right, Forward, Left, Forward, Forward)
+    //Mower(surface, pos = Position(3, 3), ori = South) -> List(Left, Forward, Right, Forward, Forward, Left)
   )
 
   val config = ConfigFactory.load()
