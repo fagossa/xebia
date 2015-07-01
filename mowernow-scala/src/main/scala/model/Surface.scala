@@ -23,12 +23,12 @@ case class Surface(dim: Dimension) {
 
 case class Mower(surface: Surface, pos: Position, ori: Orientation) {
 
-  private def rotate(command: Command): Mower = {
+  def rotate(command: Command): Mower = {
     val nextOrientation = rotations((ori, command))
     copy(ori = nextOrientation)
   }
 
-  private def forward: Mower = {
+  def forward: Mower = {
     val doNotMove = this
     val newState = ori match {
       case North => copy(pos = Position(pos.x, pos.y - 1))
